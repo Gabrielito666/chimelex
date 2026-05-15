@@ -5,11 +5,8 @@
 #include <errno.h>
 #include <alsa/asoundlib.h>
 
-#include "wave-fn.h"
 #include "sound.h"
-/* sound__create
- * metodo para crear sonidos
- */
+
 
 //implementación
 Sound sound__create(WaveFn wave_fn, double duration, unsigned int rate)
@@ -56,10 +53,10 @@ void sound__play(Sound sound)
 	unsigned int length = floor(sound.rate * sound.duration);
 	// Convertir double (-1.0 a 1.0) → int16
 	short *buffer = malloc(length * sizeof(short));
-	for (int i = 0; i < length; i++)
+	for (unsigned int i = 0; i < length; i++)
 	{
 		double t = (double)i / sound.rate;
-		buffer[i] = (short)(sound.wave_fn.wave_base_fn(t, sound.wave_fn.params) * 32767);
+		buffer[i] = ((short)(wave_fn_opts.eval(&sound.wave_fn, t) * 32767));
 	}
 
 	/**
@@ -67,7 +64,7 @@ void sound__play(Sound sound)
 	 */
 
 	// Enviar al dispositivo
-	int frames_written = 0;
+	unsigned int frames_written = 0;
 	while (frames_written < length)
 	{
 		int ret = snd_pcm_writei(pcm_handle, buffer + frames_written, length - frames_written);

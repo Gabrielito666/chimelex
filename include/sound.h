@@ -1,3 +1,5 @@
+#include "wave-fn.h"
+
 typedef struct
 {
 	WaveFn wave_fn;

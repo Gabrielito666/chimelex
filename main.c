@@ -3,43 +3,20 @@
 #include<stdlib.h>
 #include<math.h>
 #include<time.h>
-#include "wave-fn.h"
-#include "sound.h"
-
-double sin_wave_implementation(double t, double fq, double amp)
-{
-	return amp * sin(fq * 2.0 * M_PI *  t);
-};
-typedef struct
-{
-	double fq;
-	double amp;
-} SinParams;
-
-double sin_wave_base_fn(double t, void *params)
-{
-	SinParams *sin_params = (SinParams *)params;
-	return sin_wave_implementation(t, sin_params->fq, sin_params->amp);
-};
+#include "sin.h"
 
 double random_double(double min, double max)
 {
     return min + (rand() / (double)RAND_MAX) * (max - min);
 }
 
-SinParams sin_params__create(double fq, double amp)
-{
-	SinParams sin_params = {fq, amp};
-	return sin_params;
-}
-
 Sound sin__create_random()
 {
-	SinParams sin_params = sin_params__create(random_double(1000.0, 22000.0), random_double(0.3, 0.5));
-	WaveFn sin_wave_fn = wave_fn_opts.create(sin_wave_base_fn, &sin_params, sizeof(SinParams));
+	double fq = random_double(2200, 22000);
+	double amp = random_double(0.5, 0.7);
 	double dur = random_double(0.04, 0.08);
 
-	Sound sin_sound = sound_opts.create(sin_wave_fn, dur, 44100);
+	Sound sin_sound = sound_sin__create(fq, amp, dur);
 	return sin_sound;
 }
 
@@ -53,6 +30,7 @@ int main()
 		sound_opts.play(sin_sound);
 	};
 
+	/**	
 	SinParams c_params = {261.626, 0.2};
 	SinParams e_params = {329.628, 0.2};
 	SinParams g_params = {391.995, 0.2};
@@ -71,5 +49,6 @@ int main()
 
 	sound_opts.play(chord_sound);
 
+	**/
 	return 0;
 };

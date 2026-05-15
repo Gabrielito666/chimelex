@@ -1,9 +1,20 @@
 CC = gcc
+CFLAGS = -Wall -Wextra -Iinclude -g
 
-CFLAGS = -Iinclude -g -fsanitize=address
-LDFLAGS = -lm -lasound
+SRC = lib/sound.c lib/wave-fn.c lib/sin.c
+OBJ = $(SRC:.c=.o)
 
-SRC = main.c include/sound.c include/wave-fn.c
+TARGET = main
 
-main:
-	$(CC) $(SRC) $(CFLAGS) $(LDFLAGS) -o main
+all: $(TARGET)
+
+# Compilar el ejecutable directamente
+$(TARGET): $(OBJ) main.c
+	$(CC) $(CFLAGS) main.c $(OBJ) -o $(TARGET) -lasound -lm
+
+# Regla genérica: .c -> .o
+lib/%.o: lib/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+clean:
+	rm -f lib/*.o $(TARGET)

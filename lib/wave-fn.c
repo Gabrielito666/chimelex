@@ -37,7 +37,7 @@ double wave_base_fn_add(double t, void *params)
 {
 	WaveFnsStack *stack = (WaveFnsStack *)params;
 	double result = 0.0;
-	for(size_t i = 0; i < stack->length; i++) result += stack->wave_fns[i].wave_base_fn(t, stack->wave_fns[i].params);
+	for(int i = 0; i < stack->length; i++) result += stack->wave_fns[i].wave_base_fn(t, stack->wave_fns[i].params);
 	return result;
 };
 
@@ -48,10 +48,16 @@ WaveFn wave_fn__add(WaveFnsStack wave_fns_stack)
 	return wave_fn_result;
 };
 
+double wave_fn__eval(WaveFn *wave_fn, double t)
+{
+	return wave_fn->wave_base_fn(t, &wave_fn->params);
+}
+
 //Mapper
 WaveFnOpts wave_fn_opts =
 {
     .create = wave_fn__create,
     .create_stack = wave_fn__create_stack,
-    .add = wave_fn__add
+    .add = wave_fn__add,
+    .eval = wave_fn__eval
 };

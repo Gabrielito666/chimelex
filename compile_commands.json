@@ -1,0 +1,52 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iinclude",
+      "-g",
+      "-c",
+      "-o",
+      "lib/sound.o",
+      "lib/sound.c"
+    ],
+    "directory": "/home/gabrielito/proyectos/chimelex",
+    "file": "/home/gabrielito/proyectos/chimelex/lib/sound.c",
+    "output": "/home/gabrielito/proyectos/chimelex/lib/sound.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-Wall",
+      "-Wextra",
+      "-Iinclude",
+      "-g",
+      "-c",
+      "-o",
+      "lib/wave-fn.o",
+      "lib/wave-fn.c"
+    ],
+    "directory": "/home/gabrielito/proyectos/chimelex",
+    "file": "/home/gabrielito/proyectos/chimelex/lib/wave-fn.c",
+    "output": "/home/gabrielito/proyectos/chimelex/lib/wave-fn.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-Iinclude",
+      "-g",
+      "lib/sound.o",
+      "lib/wave-fn.o",
+      "-o",
+      "main",
+      "main.c"
+    ],
+    "directory": "/home/gabrielito/proyectos/chimelex",
+    "file": "/home/gabrielito/proyectos/chimelex/main.c",
+    "output": "/home/gabrielito/proyectos/chimelex/main"
+  }
+]
