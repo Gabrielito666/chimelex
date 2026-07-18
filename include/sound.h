@@ -1,3 +1,5 @@
+#ifndef CHIMELEX_SOUND
+#define CHIMELEX_SOUND
 #include "wave-fn.h"
 
 typedef struct
@@ -16,3 +18,4 @@ typedef struct {
 } SoundOpts;
 
 extern SoundOpts sound_opts;
+#endif

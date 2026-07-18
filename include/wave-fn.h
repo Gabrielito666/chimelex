@@ -1,3 +1,4 @@
+#ifndef CHIMELEX_WAVE_FN
 #include <stddef.h>
 
 #define WAVE_FN_PARAMS_SIZE 64
@@ -31,3 +32,4 @@ typedef struct
 } WaveFnOpts;
 
 extern WaveFnOpts wave_fn_opts;
+#endif
