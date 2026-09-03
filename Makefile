@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude -g
 
-SRC = lib/sound.c lib/wave-fn.c lib/sin.c
+SRC = src/sound.c src/wave-fn.c src/sin.c
 OBJ = $(SRC:.c=.o)
 
 TARGET = main
@@ -13,8 +13,8 @@ $(TARGET): $(OBJ) main.c
 	$(CC) $(CFLAGS) main.c $(OBJ) -o $(TARGET) -lasound -lm
 
 # Regla genérica: .c -> .o
-lib/%.o: lib/%.c
+src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f lib/*.o $(TARGET)
+	rm -f src/*.o $(TARGET)
