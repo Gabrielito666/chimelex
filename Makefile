@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude -g
 
-SRC = src/sound.c src/wave-fn.c src/sin.c
+SRC = src/sound.c src/wave-fn.c src/sin.c src/arena.c src/global-arena.c src/chimelex.c
 OBJ = $(SRC:.c=.o)
 
 TARGET = main

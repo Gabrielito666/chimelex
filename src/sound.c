@@ -1,30 +1,35 @@
-//====SOUND====//
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <errno.h>
 #include <alsa/asoundlib.h>
-
 #include "sound.h"
+#include "wave-fn.h"
+#include "global-arena.h"
+#include "arena.h"
 
-
-//implementación
-Sound sound__create(WaveFn wave_fn, double duration, unsigned int rate)
+struct Sound
 {
-	Sound sound = {wave_fn, duration, rate};
-	return sound;
+	WaveFn* wave_fn;
+	double duration;
+};
+
+Sound* sound__create(WaveFn* wave_fn, double duration)
+{
+	Arena* _global_arena = global_arena__get();
+	Sound sound = {wave_fn, duration};
+	return arena__push(_global_arena, sizeof(Sound), &sound);
 };
 
 /**
- * sound__play
  * metodo para reproducir con ALSA
  */
-//implementación
-void sound__play(Sound sound)
+void sound__play(Sound* sound, unsigned int rate)
 {
+	SoundContext sound_context = { sound->duration };
+
 	snd_pcm_t *pcm_handle;
 	snd_pcm_hw_params_t *params;
-	unsigned int rate = sound.rate;
 	int channels = 1;   // mono
 	snd_pcm_uframes_t frames = 32;
 	int pcm;
@@ -50,13 +55,13 @@ void sound__play(Sound sound)
 		exit(1);
 	};
 
-	unsigned int length = floor(sound.rate * sound.duration);
+	unsigned int length = floor(rate * sound->duration);
 	// Convertir double (-1.0 a 1.0) → int16
 	short *buffer = malloc(length * sizeof(short));
 	for (unsigned int i = 0; i < length; i++)
 	{
-		double t = (double)i / sound.rate;
-		buffer[i] = ((short)(wave_fn_opts.eval(&sound.wave_fn, t) * 32767));
+		double t = (double)i / rate;
+		buffer[i] = ((short)(wave_fn__eval(sound->wave_fn, t, &sound_context) * 32767));
 	}
 
 	/**
@@ -88,5 +93,3 @@ void sound__play(Sound sound)
 	snd_pcm_close(pcm_handle);
 	free(buffer);
 }
-
-SoundOpts sound_opts = { .create = sound__create, .play = sound__play };

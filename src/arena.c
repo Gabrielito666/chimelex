@@ -2,21 +2,25 @@
 #include "stdio.h"
 #include <string.h>
 #include <stdbool.h>
+#include "arena.h"
 
-typedef struct {
+#define CHUNKS_ARRAY_LIMIT 100
+
+struct Chunk {
 	size_t size;
 	size_t current_space_used;
 	void *first_empty_position;
 	void *first_position;
-} Chunk;
+};
 
-typedef struct
+struct Arena
 {
 	size_t chunk_size;
 	unsigned int length;
 	unsigned int limit;
 	Chunk* chunks;
-} Arena;
+};
+
 
 size_t align_size(size_t size, size_t alignment)
 {
@@ -54,34 +58,42 @@ void *chunk__push(Chunk *chunk, size_t element_size, void *element)
 	return element_ptr;
 }
 
-Arena arena__create(size_t chunk_size)
+Arena *arena__create(size_t chunk_size)
 {
 	Chunk first_chunk = chunk__create(chunk_size);
-	Chunk *chunks_arr = malloc(sizeof(Chunk) * 100);
+	Chunk *chunks_arr = malloc(sizeof(Chunk) * CHUNKS_ARRAY_LIMIT);
 
 	if(chunks_arr == NULL)
 	{
-		fprintf(stderr, "[CHIMELEX ARENA ERROR] arena creation malloc falied\n");
+		fprintf(stderr, "[CHIMELEX ARENA ERROR] arena chunks array creation malloc falied\n");
 		abort();
 	}
 
 	chunks_arr[0] = first_chunk;
 
-	Arena arena = {
+	Arena *arena_ptr = malloc(sizeof(Arena));
+
+	if(arena_ptr == NULL)
+	{
+		fprintf(stderr, "[CHIMELEX ARENA ERROR] arena creation malloc falied\n");
+		abort();
+	}
+
+	*arena_ptr = (Arena){
 		.chunk_size = chunk_size,
 		.length = 1,
-		.limit = 100, //TODO usar un #define
+		.limit = CHUNKS_ARRAY_LIMIT,
 		.chunks = chunks_arr,
 	};
 
-	return arena;
+	return arena_ptr;
 }
 
-void arena__appendChunk(Arena *arena)
+void arena__append_chunk(Arena *arena)
 {
 	if(arena->length == arena->limit)
 	{
-		arena->limit += 100; //TODO usar un #define
+		arena->limit += CHUNKS_ARRAY_LIMIT;
 		void *temp = realloc(arena->chunks, sizeof(Chunk) * arena->limit);
 
 		if(temp == NULL)
@@ -104,16 +116,20 @@ void *arena__push(Arena *arena, size_t element_size, void *element)
 	if(ptr) return ptr;
 
 	//if not space, append a chunk and reintent
-	arena__appendChunk(arena);
+	arena__append_chunk(arena);
 	
 	void *ptr2 = chunk__push(&arena->chunks[arena->length -1], element_size, element);
 	
-	//TODO matar el proceso si el elemento es mayor que el tamaño del chunk, o ver como manejar esto
+	if(ptr2 == NULL)
+	{
+		fprintf(stderr, "[CHIMELEX ARENA ERROR] arena push a element greater than chunk size\n");
+		abort();
+	}
 
 	return ptr2;
 }
 
-void arena__freeAll(Arena *arena)
+void arena__free_all(Arena *arena)
 {
 	for(unsigned int i = 0; i < arena->length; i++)
 	{

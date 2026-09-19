@@ -2,20 +2,9 @@
 #define CHIMELEX_SOUND
 #include "wave-fn.h"
 
-typedef struct
-{
-	WaveFn wave_fn;
-	double duration;
-	unsigned int rate;
-} Sound;
+typedef struct Sound Sound;
 
-typedef Sound (*Sound__createFn)(WaveFn wave_fn, double duration, unsigned int rate);
-typedef void (*Sound__playFn)(Sound sound);
+Sound* sound__create(WaveFn* wave_fn, double duration);
+void sound__play(Sound* sound, unsigned int rate);
 
-typedef struct {
-	Sound__createFn create;
-	Sound__playFn play;
-} SoundOpts;
-
-extern SoundOpts sound_opts;
 #endif
